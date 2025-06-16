@@ -98,4 +98,78 @@
           }
         }
 
-      } else if(tipo === 'cuadrat
+      } else if(tipo === 'cuadratica') {
+        const a = parseFloat(document.getElementById('A').value);
+        const b = parseFloat(document.getElementById('B').value);
+        const c = parseFloat(document.getElementById('C').value);
+        const signo = document.getElementById('signo-cuadratica').value;
+
+        if(isNaN(a) || isNaN(b) || isNaN(c)) {
+          resultado = 'Por favor, ingresa valores válidos para a, b y c.';
+        } else if(a === 0) {
+          resultado = 'No es una desigualdad cuadrática válida (a no puede ser 0).';
+        } else {
+          const D = b*b - 4*a*c;
+
+          if(D < 0) {
+            // No hay raíces reales
+            if(a > 0) {
+              // Parabola hacia arriba siempre positiva
+              if(signo === '<' || signo === '<=') {
+                resultado = 'No hay soluciones reales.';
+              } else {
+                resultado = 'Todos los reales son solución.';
+              }
+            } else {
+              // Parabola hacia abajo siempre negativa
+              if(signo === '>' || signo === '>=') {
+                resultado = 'No hay soluciones reales.';
+              } else {
+                resultado = 'Todos los reales son solución.';
+              }
+            }
+          } else if(D === 0) {
+            const r = -b / (2*a);
+            if(signo === '<') {
+              resultado = (a > 0) ? `x ≠ ${r.toFixed(3)}` : `x = ${r.toFixed(3)}`;
+            } else if(signo === '<=') {
+              resultado = (a > 0) ? `x ∈ ℝ` : `x = ${r.toFixed(3)}`;
+            } else if(signo === '>') {
+              resultado = (a > 0) ? `x = ${r.toFixed(3)}` : `x ∈ ℝ`;
+            } else if(signo === '>=') {
+              resultado = (a > 0) ? `x = ${r.toFixed(3)}` : `x ∈ ℝ`;
+            }
+          } else {
+            // Dos raíces reales distintas
+            const sqrtD = Math.sqrt(D);
+            const r1 = (-b - sqrtD) / (2*a);
+            const r2 = (-b + sqrtD) / (2*a);
+            const menor = Math.min(r1, r2);
+            const mayor = Math.max(r1, r2);
+
+            if(signo === '<') {
+              resultado = (a > 0) ? 
+                `x ∈ (${menor.toFixed(3)}, ${mayor.toFixed(3)})` :
+                `x ∈ (-∞, ${menor.toFixed(3)}) ∪ (${mayor.toFixed(3)}, ∞)`;
+            } else if(signo === '<=') {
+              resultado = (a > 0) ?
+                `x ∈ [${menor.toFixed(3)}, ${mayor.toFixed(3)}]` :
+                `x ∈ (-∞, ${menor.toFixed(3)}] ∪ [${mayor.toFixed(3)}, ∞)`;
+            } else if(signo === '>') {
+              resultado = (a > 0) ?
+                `x ∈ (-∞, ${menor.toFixed(3)}) ∪ (${mayor.toFixed(3)}, ∞)` :
+                `x ∈ (${menor.toFixed(3)}, ${mayor.toFixed(3)})`;
+            } else if(signo === '>=') {
+              resultado = (a > 0) ?
+                `x ∈ (-∞, ${menor.toFixed(3)}] ∪ [${mayor.toFixed(3)}, ∞)` :
+                `x ∈ [${menor.toFixed(3)}, ${mayor.toFixed(3)}]`;
+            }
+          }
+        }
+      }
+
+      document.getElementById('resultado').innerHTML = resultado;
+    }
+  </script>
+</body>
+</html>
