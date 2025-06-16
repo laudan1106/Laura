@@ -1,175 +1,216 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Solucionador de Desigualdades</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    input, select, button { margin: 5px 0; padding: 5px; }
-    .resultado { margin-top: 20px; font-weight: bold; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Solucionador de Desigualdades</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; }
+  label, select, input, button { display: block; margin: 10px 0; }
+  .resultado { margin-top: 20px; font-weight: bold; }
+</style>
 </head>
 <body>
-  <h2>Solucionador de Desigualdades Lineales y Cuadráticas</h2>
 
-  <label for="tipo">Tipo de desigualdad:</label>
-  <select id="tipo">
-    <option value="lineal">Lineal (ax + b &lt; 0)</option>
-    <option value="cuadratica">Cuadrática (ax² + bx + c &lt; 0)</option>
+<h2>Solucionador de Desigualdades Lineales y Cuadráticas</h2>
+
+<label for="tipo">Tipo de desigualdad:</label>
+<select id="tipo">
+  <option value="lineal">Lineal (ax + b &lt; 0)</option>
+  <option value="cuadratica">Cuadrática (ax² + bx + c &lt; 0)</option>
+</select>
+
+<!-- Inputs para desigualdad lineal -->
+<div id="lineal-inputs">
+  <label for="a">Coeficiente a:</label>
+  <input type="number" id="a" value="1" step="any" />
+  
+  <label for="b">Coeficiente b:</label>
+  <input type="number" id="b" value="0" step="any" />
+
+  <label for="signoLineal">Signo de desigualdad:</label>
+  <select id="signoLineal">
+    <option value="<"><</option>
+    <option value="<="><=</option>
+    <option value=">">></option>
+    <option value=">=">>=</option>
   </select>
+</div>
 
-  <div id="inputs-lineal" style="margin-top: 10px;">
-    <label for="a">a:</label>
-    <input type="number" id="a" value="1" step="any" /><br/>
-    <label for="b">b:</label>
-    <input type="number" id="b" value="0" step="any" /><br/>
-    <label for="signo-lineal">Desigualdad:</label>
-    <select id="signo-lineal">
-      <option value="<"><</option>
-      <option value="<="><=</option>
-      <option value=">">></option>
-      <option value=">=">>=</option>
-    </select>
-  </div>
+<!-- Inputs para desigualdad cuadrática -->
+<div id="cuadratica-inputs" style="display:none;">
+  <label for="A">Coeficiente a:</label>
+  <input type="number" id="A" value="1" step="any" />
+  
+  <label for="B">Coeficiente b:</label>
+  <input type="number" id="B" value="0" step="any" />
+  
+  <label for="C">Coeficiente c:</label>
+  <input type="number" id="C" value="0" step="any" />
 
-  <div id="inputs-cuadratica" style="display:none; margin-top: 10px;">
-    <label for="A">a:</label>
-    <input type="number" id="A" value="1" step="any" /><br/>
-    <label for="B">b:</label>
-    <input type="number" id="B" value="0" step="any" /><br/>
-    <label for="C">c:</label>
-    <input type="number" id="C" value="0" step="any" /><br/>
-    <label for="signo-cuadratica">Desigualdad:</label>
-    <select id="signo-cuadratica">
-      <option value="<"><</option>
-      <option value="<="><=</option>
-      <option value=">">></option>
-      <option value=">=">>=</option>
-    </select>
-  </div>
+  <label for="signoCuadratica">Signo de desigualdad:</label>
+  <select id="signoCuadratica">
+    <option value="<"><</option>
+    <option value="<="><=</option>
+    <option value=">">></option>
+    <option value=">=">>=</option>
+  </select>
+</div>
 
-  <button onclick="resolver()" style="margin-top: 10px;">Resolver</button>
+<button id="resolver">Resolver</button>
 
-  <div class="resultado" id="resultado"></div>
+<div class="resultado" id="resultado"></div>
 
-  <script>
-    // Cambiar visibilidad según tipo seleccionado
-    document.getElementById('tipo').addEventListener('change', function() {
-      if(this.value === 'lineal') {
-        document.getElementById('inputs-lineal').style.display = 'block';
-        document.getElementById('inputs-cuadratica').style.display = 'none';
-        document.getElementById('resultado').innerHTML = '';
+<script>
+// Cambiar visibilidad de inputs según tipo de desigualdad
+document.getElementById('tipo').addEventListener('change', function() {
+  if(this.value === 'lineal') {
+    document.getElementById('lineal-inputs').style.display = 'block';
+    document.getElementById('cuadratica-inputs').style.display = 'none';
+    document.getElementById('resultado').innerHTML = '';
+  } else {
+    document.getElementById('lineal-inputs').style.display = 'none';
+    document.getElementById('cuadratica-inputs').style.display = 'block';
+    document.getElementById('resultado').innerHTML = '';
+  }
+});
+
+// Función para resolver desigualdad lineal
+function resolverLineal(a, b, signo) {
+  if(a === 0) return 'El coeficiente "a" no puede ser 0 para una desigualdad lineal.';
+
+  const x = -b / a;
+  let resultado = '';
+
+  switch(signo) {
+    case '<':
+      resultado = (a > 0) ? `x < ${x.toFixed(4)}` : `x > ${x.toFixed(4)}`;
+      break;
+    case '<=':
+      resultado = (a > 0) ? `x ≤ ${x.toFixed(4)}` : `x ≥ ${x.toFixed(4)}`;
+      break;
+    case '>':
+      resultado = (a > 0) ? `x > ${x.toFixed(4)}` : `x < ${x.toFixed(4)}`;
+      break;
+    case '>=':
+      resultado = (a > 0) ? `x ≥ ${x.toFixed(4)}` : `x ≤ ${x.toFixed(4)}`;
+      break;
+    default:
+      resultado = 'Signo de desigualdad no reconocido.';
+  }
+  return resultado;
+}
+
+// Función para resolver desigualdad cuadrática
+function resolverCuadratica(a, b, c, signo) {
+  if(a === 0) return 'El coeficiente "a" no puede ser 0 para una desigualdad cuadrática.';
+  const D = b*b - 4*a*c;
+  let resultado = '';
+
+  if(D < 0) {
+    // No hay raíces reales
+    if(a > 0) {
+      // Parabola hacia arriba siempre positiva
+      if(signo === '<' || signo === '<=') {
+        resultado = 'No hay soluciones reales.';
       } else {
-        document.getElementById('inputs-lineal').style.display = 'none';
-        document.getElementById('inputs-cuadratica').style.display = 'block';
-        document.getElementById('resultado').innerHTML = '';
+        resultado = 'Todos los números reales son solución.';
       }
-    });
-
-    function resolver() {
-      const tipo = document.getElementById('tipo').value;
-      let resultado = '';
-
-      if(tipo === 'lineal') {
-        const a = parseFloat(document.getElementById('a').value);
-        const b = parseFloat(document.getElementById('b').value);
-        const signo = document.getElementById('signo-lineal').value;
-
-        if(isNaN(a) || isNaN(b)) {
-          resultado = 'Por favor, ingresa valores válidos para a y b.';
-        } else if(a === 0) {
-          resultado = 'No es una desigualdad lineal válida (a no puede ser 0).';
-        } else {
-          const x = -b / a;
-          // Ajustamos según signo y signo de 'a'
-          switch(signo) {
-            case '<':
-              resultado = (a > 0) ? `x < ${x.toFixed(3)}` : `x > ${x.toFixed(3)}`;
-              break;
-            case '<=':
-              resultado = (a > 0) ? `x ≤ ${x.toFixed(3)}` : `x ≥ ${x.toFixed(3)}`;
-              break;
-            case '>':
-              resultado = (a > 0) ? `x > ${x.toFixed(3)}` : `x < ${x.toFixed(3)}`;
-              break;
-            case '>=':
-              resultado = (a > 0) ? `x ≥ ${x.toFixed(3)}` : `x ≤ ${x.toFixed(3)}`;
-              break;
-          }
-        }
-
-      } else if(tipo === 'cuadratica') {
-        const a = parseFloat(document.getElementById('A').value);
-        const b = parseFloat(document.getElementById('B').value);
-        const c = parseFloat(document.getElementById('C').value);
-        const signo = document.getElementById('signo-cuadratica').value;
-
-        if(isNaN(a) || isNaN(b) || isNaN(c)) {
-          resultado = 'Por favor, ingresa valores válidos para a, b y c.';
-        } else if(a === 0) {
-          resultado = 'No es una desigualdad cuadrática válida (a no puede ser 0).';
-        } else {
-          const D = b*b - 4*a*c;
-
-          if(D < 0) {
-            // No hay raíces reales
-            if(a > 0) {
-              // Parabola hacia arriba siempre positiva
-              if(signo === '<' || signo === '<=') {
-                resultado = 'No hay soluciones reales.';
-              } else {
-                resultado = 'Todos los reales son solución.';
-              }
-            } else {
-              // Parabola hacia abajo siempre negativa
-              if(signo === '>' || signo === '>=') {
-                resultado = 'No hay soluciones reales.';
-              } else {
-                resultado = 'Todos los reales son solución.';
-              }
-            }
-          } else if(D === 0) {
-            const r = -b / (2*a);
-            if(signo === '<') {
-              resultado = (a > 0) ? `x ≠ ${r.toFixed(3)}` : `x = ${r.toFixed(3)}`;
-            } else if(signo === '<=') {
-              resultado = (a > 0) ? `x ∈ ℝ` : `x = ${r.toFixed(3)}`;
-            } else if(signo === '>') {
-              resultado = (a > 0) ? `x = ${r.toFixed(3)}` : `x ∈ ℝ`;
-            } else if(signo === '>=') {
-              resultado = (a > 0) ? `x = ${r.toFixed(3)}` : `x ∈ ℝ`;
-            }
-          } else {
-            // Dos raíces reales distintas
-            const sqrtD = Math.sqrt(D);
-            const r1 = (-b - sqrtD) / (2*a);
-            const r2 = (-b + sqrtD) / (2*a);
-            const menor = Math.min(r1, r2);
-            const mayor = Math.max(r1, r2);
-
-            if(signo === '<') {
-              resultado = (a > 0) ? 
-                `x ∈ (${menor.toFixed(3)}, ${mayor.toFixed(3)})` :
-                `x ∈ (-∞, ${menor.toFixed(3)}) ∪ (${mayor.toFixed(3)}, ∞)`;
-            } else if(signo === '<=') {
-              resultado = (a > 0) ?
-                `x ∈ [${menor.toFixed(3)}, ${mayor.toFixed(3)}]` :
-                `x ∈ (-∞, ${menor.toFixed(3)}] ∪ [${mayor.toFixed(3)}, ∞)`;
-            } else if(signo === '>') {
-              resultado = (a > 0) ?
-                `x ∈ (-∞, ${menor.toFixed(3)}) ∪ (${mayor.toFixed(3)}, ∞)` :
-                `x ∈ (${menor.toFixed(3)}, ${mayor.toFixed(3)})`;
-            } else if(signo === '>=') {
-              resultado = (a > 0) ?
-                `x ∈ (-∞, ${menor.toFixed(3)}] ∪ [${mayor.toFixed(3)}, ∞)` :
-                `x ∈ [${menor.toFixed(3)}, ${mayor.toFixed(3)}]`;
-            }
-          }
-        }
+    } else {
+      // Parabola hacia abajo siempre negativa
+      if(signo === '>' || signo === '>=') {
+        resultado = 'No hay soluciones reales.';
+      } else {
+        resultado = 'Todos los números reales son solución.';
       }
-
-      document.getElementById('resultado').innerHTML = resultado;
     }
-  </script>
+  } else if(D === 0) {
+    // Una raíz real
+    const r = -b / (2*a);
+    switch(signo) {
+      case '<':
+        resultado = (a > 0) ? `x ≠ ${r.toFixed(4)}` : `x = ${r.toFixed(4)}`;
+        break;
+      case '<=':
+        resultado = (a > 0) ? `Todos los reales (x ∈ ℝ)` : `x = ${r.toFixed(4)}`;
+        break;
+      case '>':
+        resultado = (a > 0) ? `x = ${r.toFixed(4)}` : `Todos los reales (x ∈ ℝ)`;
+        break;
+      case '>=':
+        resultado = (a > 0) ? `x = ${r.toFixed(4)}` : `Todos los reales (x ∈ ℝ)`;
+        break;
+      default:
+        resultado = 'Signo de desigualdad no reconocido.';
+    }
+  } else {
+    // Dos raíces reales diferentes
+    const sqrtD = Math.sqrt(D);
+    const r1 = (-b - sqrtD) / (2*a);
+    const r2 = (-b + sqrtD) / (2*a);
+    const menor = Math.min(r1, r2);
+    const mayor = Math.max(r1, r2);
+
+    switch(signo) {
+      case '<':
+        resultado = (a > 0) ? 
+          `x ∈ (${menor.toFixed(4)}, ${mayor.toFixed(4)})` :
+          `x ∈ (-∞, ${menor.toFixed(4)}) ∪ (${mayor.toFixed(4)}, +∞)`;
+        break;
+      case '<=':
+        resultado = (a > 0) ?
+          `x ∈ [${menor.toFixed(4)}, ${mayor.toFixed(4)}]` :
+          `x ∈ (-∞, ${menor.toFixed(4)}] ∪ [${mayor.toFixed(4)}, +∞)`;
+        break;
+      case '>':
+        resultado = (a > 0) ?
+          `x ∈ (-∞, ${menor.toFixed(4)}) ∪ (${mayor.toFixed(4)}, +∞)` :
+          `x ∈ (${menor.toFixed(4)}, ${mayor.toFixed(4)})`;
+        break;
+      case '>=':
+        resultado = (a > 0) ?
+          `x ∈ (-∞, ${menor.toFixed(4)}] ∪ [${mayor.toFixed(4)}, +∞)` :
+          `x ∈ [${menor.toFixed(4)}, ${mayor.toFixed(4)}]`;
+        break;
+      default:
+        resultado = 'Signo de desigualdad no reconocido.';
+    }
+  }
+
+  return resultado;
+}
+
+// Escuchar botón para resolver
+document.getElementById('resolver').addEventListener('click', function() {
+  const tipo = document.getElementById('tipo').value;
+  let resultadoFinal = '';
+
+  if(tipo === 'lineal') {
+    const a = parseFloat(document.getElementById('a').value);
+    const b = parseFloat(document.getElementById('b').value);
+    const signo = document.getElementById('signoLineal').value;
+
+    if(isNaN(a) || isNaN(b)) {
+      resultadoFinal = 'Por favor, ingresa valores numéricos válidos para a y b.';
+    } else {
+      resultadoFinal = resolverLineal(a, b, signo);
+    }
+  } else {
+    const a = parseFloat(document.getElementById('A').value);
+    const b = parseFloat(document.getElementById('B').value);
+    const c = parseFloat(document.getElementById('C').value);
+    const signo = document.getElementById('signoCuadratica').value;
+
+    if(isNaN(a) || isNaN(b) || isNaN(c)) {
+      resultadoFinal = 'Por favor, ingresa valores numéricos válidos para a, b y c.';
+    } else {
+      resultadoFinal = resolverCuadratica(a, b, c, signo);
+    }
+  }
+
+  document.getElementById('resultado').innerText = resultadoFinal;
+});
+</script>
+
 </body>
 </html>
